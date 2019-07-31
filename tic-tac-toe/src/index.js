@@ -96,13 +96,16 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       const coordinate = history[move].coordinates;
+      const isCurrentlySelected = (move == this.state.stepNumber);
       const desc = move ?
         'Go to move #' + move + ' at coordinate ' + coordinate:
         'Go to game start';
         
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)}>
+            {isCurrentlySelected ? <b>{desc}</b> : desc}
+          </button>
         </li>
       );
     });
