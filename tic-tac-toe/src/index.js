@@ -54,7 +54,7 @@ class Game extends React.Component {
       ],
       locationHistory: [
         { 
-          coordinates: Array(9).fill(null)
+          coordinates: null
         }
       ],
       stepNumber: 0,
@@ -97,6 +97,7 @@ class Game extends React.Component {
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0
+
     });
   }
  
@@ -106,18 +107,16 @@ class Game extends React.Component {
     const currentLocation = locationHistory[this.state.stepNumber];
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+
     const moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move :
         'Go to game start';
-
-        console.log(currentLocation);
-
-
         
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <p>{locationHistory[move].coordinates}</p>
         </li>
       );
     });
