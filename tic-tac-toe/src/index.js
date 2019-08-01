@@ -56,11 +56,13 @@ class Game extends React.Component {
       stepNumber: 0,
       xIsNext: true,
       currentCoord: null,
+      isToggled: false
     };
   }
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const isToggled = this.state.isToggled;
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     const coord = calcuateCoordinates(i);
@@ -88,20 +90,29 @@ class Game extends React.Component {
       xIsNext: (step % 2) === 0
     });
   }
- 
+
+  toggle() {
+    this.setState({
+      isToggled: !this.state.isToggled
+    });
+  }
+  
   render() {
     const history = this.state.history;
+    const isToggled = this.state.isToggled;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-
+  
     const moves = history.map((step, move) => {
       const coordinate = history[move].coordinates;
       const isCurrentlySelected = (move == this.state.stepNumber);
-      const desc = move ?
-        'Go to move #' + move + ' at coordinate ' + coordinate:
+      let desc = "";
+        desc = move ?
+        `Go to move # ${move} at coordinate ${coordinate}`:
         'Go to game start';
-        
+
       return (
+        // move is 0 - 8, want to switch them to descending, need to flip the array order around before it gets here
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>
             {isCurrentlySelected ? <b>{desc}</b> : desc}
@@ -109,7 +120,7 @@ class Game extends React.Component {
         </li>
       );
     });
-
+    
     let status;
     if (winner) {
       status = "Winner: " + winner;
@@ -127,7 +138,8 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ol>{this.state.isToggled ? moves.reverse() : moves}</ol>
+          <button onClick={() => this.toggle()}>Toggle Board</button>
         </div>
       </div>
     );
