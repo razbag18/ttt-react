@@ -76,7 +76,9 @@ export default class Game extends React.Component {
     const squares = current.squares.slice();
     const coord = calculateCoordinates(i);
 
-    if (calculateWinner(squares) || squares[i]) {
+    const winner = calculateWinner(squares);
+
+    if ((!winner.continuePlay && winner.isDraw) || squares[i]) {
       return;
     }
 
@@ -186,7 +188,8 @@ export function calculateWinner(squares) {
   }
   if (!squares.includes(null)) {
     return {
-      isDraw: true
+      isDraw: true,
+      continuePlay: false,
     };
   }
   return {
