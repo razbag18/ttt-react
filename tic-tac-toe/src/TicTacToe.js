@@ -1,15 +1,10 @@
 import React, { Component } from "react";
-// import "./index.css";
+//import "./index.css";
 
 function Square(props) {
-  const winningSquareStyle = {
-    backgroundColor: "black",
-    color: "#fff"
-  };
   return (
     <button
-      className="square"
-      style={props.winningSquare ? winningSquareStyle : null}
+      className = {props.winningSquare ? "square winning-squares" : "square" }
       onClick={props.onClick}
     >
       {props.value}
@@ -82,7 +77,8 @@ export default class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     const coord = calculateCoordinates(i);
-    const winner = this.calculateWinner(squares);
+    this.calculateWinner(squares);
+    const winner = this.state.winStatus;
     const {isWinner, isDraw, continuePlay } = winner;
 
     if (isWinner || !winner.continuePlay || winner.isDraw || squares[i]) {
@@ -112,7 +108,7 @@ export default class Game extends React.Component {
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
       currentCoord: coord
-    },  this.calculateWinner(squares));
+    }, this.calculateWinner(squares));
 
 
   }
@@ -121,7 +117,7 @@ export default class Game extends React.Component {
     this.setState({
       stepNumber: step,
       xIsNext: step % 2 === 0
-    });
+    }, this.calculateWinner(this.state.history[step].squares)) ;
   }
 
   toggle() {
@@ -145,7 +141,6 @@ export default class Game extends React.Component {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        //trying to set games' state outside of itself
         this.setState({
           winStatus: {
             isWinner: true,
@@ -156,11 +151,7 @@ export default class Game extends React.Component {
           }
          
         })
-        return {
-          winningSquares: lines[i],
-          winner: squares[a],
-          isWinner: true
-        };
+        return;
       }
     }
     if (!squares.includes(null)) {
@@ -171,18 +162,16 @@ export default class Game extends React.Component {
          continuePlay: false
         }
       })
-      return {
-        isWinner: false,
-        isDraw: true,
-        continuePlay: false,
-      };
+      return;
     }
-    return {
-        isWinner: false,
-        continuePlay: true,
-        isDraw: false
-  
-    };
+
+    this.setState({
+      winStatus: {
+       isWinner: false,
+       isDraw: false,
+       continuePlay: true
+      }
+    })
   }
 
   render() {
@@ -207,7 +196,7 @@ export default class Game extends React.Component {
     });
 
     let status;
-    if (winStatus) {
+    if (!winStatus.continuePlay) {
       if (winStatus.isWinner) {
         status = "Winner: " + winStatus.winner;
       } else if (winStatus.isDraw) {
@@ -222,7 +211,6 @@ export default class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
-            //fails here
             onClick={i => this.handleClick(i)}
             winner={winStatus.isWinner && winStatus.winningSquares}
           />
