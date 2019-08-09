@@ -4,8 +4,6 @@ import { mount, shallow } from "enzyme";
 import Game from "../TicTacToe";
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
-import renderer from "react-test-renderer";
-import { exec } from "child_process";
 
 configure({ adapter: new Adapter() });
 
@@ -130,13 +128,11 @@ describe("game functions", () => {
    // expect(inst.state.isWinner).toBe(true);
 
    expect(game.find("div[id='winner-status']").text()).toBe('Winner: X');
-   expect(inst.state.isDraw).toBe(false);
+   expect(inst.state.winStatus.isDraw).toBe(false);
    // expect(inst.state.continuePlay).toBe(false);
 
    //pull stuff out from the state, make a winStatus object on the state that will have 
    //isWInner, isDraw, continue play to use in the test to only update state in calculateWinner, whivh gets called in handleClick
-
-
       
   })
   it("handleClick re-renders entire board and updates state for draw", () => {
@@ -189,7 +185,39 @@ describe("game functions", () => {
    // expect(inst.state.isWinner).toBe(true);
 
    expect(game.find("div[id='winner-status']").text()).toBe('Draw');
-   expect(inst.state.isDraw).toBe(true);
+  //  expect(inst.state.isDraw).toBe(true);
+   // expect(inst.state.continuePlay).toBe(false);
+
+   //pull stuff out from the state, make a winStatus object on the state that will have 
+   //isWInner, isDraw, continue play to use in the test to only update state in calculateWinner, whivh gets called in handleClick
+
+
+      
+  })
+
+  it("handleClick re-renders entire board and continuePlay state remains true when no win and no draw", () => {
+    const inst = game.instance();
+    inst.setState({
+      history: [
+        {
+          squares: [null, null, null, null, null, null, null, null, null],
+          coordinates: null
+        },
+        {
+          squares: ['X', null, null, null, null, null, null, null, null],
+          coordinates: "0,0"
+        },
+      ],
+      stepNumber: 1,
+    })
+
+    inst.handleClick(8);
+
+    const newState = inst.state.history;
+   // expect(inst.state.isWinner).toBe(true);
+
+   expect(game.find("div[id='winner-status']").text()).toBe("Next player: X");
+  //  expect(inst.state.isDraw).toBe(true);
    // expect(inst.state.continuePlay).toBe(false);
 
    //pull stuff out from the state, make a winStatus object on the state that will have 
