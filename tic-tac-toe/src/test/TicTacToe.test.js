@@ -93,15 +93,21 @@ describe("Game", () => {
     expect(game.exists()).toBe(true);
   });
 
-  describe("<Game /> functions", () => {
-    it("test the toggle function", () => {
+  describe("Game functions", () => {
+    it("when toggled, expected the state isToggled to be true", () => {
+      //Arrange 
      const inst = game.instance();
+
+     //Act
      inst.toggle();
+
+     //Assert
      expect(inst.state.isToggled).toBe(true);
     });
   });
 
-  it("test the jumpTo function", () => {
+  it("when jumpTo is called, expect to states stepNumber to be the value passed into jumpTo", () => {
+    //Arrange
     const inst = game.instance();
     inst.setState({
       history: [
@@ -119,11 +125,16 @@ describe("Game", () => {
         },
       ]
     })
-    inst.jumpTo(2);
-    expect(inst.state.stepNumber).toBe(2);
+
+    //Act
+    inst.jumpTo(1);
+
+    //Assert
+    expect(inst.state.stepNumber).toBe(1);
   });
 
-  it("handleClick re-renders entire board and updates state for winning move", () => {
+  it("when three in a row of same value vertically, horizontally or diagonally, handleClick updates state to determine the winner and ensure play cannot continue", () => {
+    //Arrange
     const inst = game.instance();
     inst.setState({
       history: [
@@ -151,28 +162,24 @@ describe("Game", () => {
       stepNumber: 4,
     })
 
+    //Act
     inst.handleClick(8);
     game.update();
 
-    console.warn(game.debug());
+    //Assert
+    expect(game.find("div[id='winner-status']").text()).toBe('Winner: X');
+    const squares = game.find("button.square");
 
-    const newState = inst.state.history;
-   // expect(inst.state.isWinner).toBe(true);
-
-   const expectedWinStatus = { isDraw: false, continuePlay: false, isWinner: true};
-
-   expect(game.find("div[id='winner-status']").text()).toBe('Winner: X');
-   const squares = game.find("button.square");
-
-   expect(squares.getElements()[0].props.className).toContain("winning-squares");
-   expect(squares.getElements()[4].props.className).toContain("winning-squares");
-   expect(squares.getElements()[8].props.className).toContain("winning-squares");
-   expect(inst.state.winStatus.isWinner).toBe(true);
-   expect(inst.state.winStatus.winner).toBe('X');
-   expect(inst.state.winStatus.winningSquares).toEqual([0,4,8]);
+    expect(squares.getElements()[0].props.className).toContain("winning-squares");
+    expect(squares.getElements()[4].props.className).toContain("winning-squares");
+    expect(squares.getElements()[8].props.className).toContain("winning-squares");
+    expect(inst.state.winStatus.isWinner).toBe(true);
+    expect(inst.state.winStatus.winner).toBe('X');
+    expect(inst.state.winStatus.winningSquares).toEqual([0,4,8]);
       
   })
-  it("handleClick re-renders entire board and updates state for draw", () => {
+  it("handleClick updates state when there is no win and no spaces left on the board", () => {
+    //Arrange
     const inst = game.instance();
     inst.setState({
       history: [
@@ -216,23 +223,16 @@ describe("Game", () => {
       stepNumber: 8,
     })
 
+    //Act
     inst.handleClick(8);
-
-    const newState = inst.state.history;
-   // expect(inst.state.isWinner).toBe(true);
-
-   expect(game.find("div[id='winner-status']").text()).toBe('Draw');
-  //  expect(inst.state.isDraw).toBe(true);
-   // expect(inst.state.continuePlay).toBe(false);
-
-   //pull stuff out from the state, make a winStatus object on the state that will have 
-   //isWInner, isDraw, continue play to use in the test to only update state in calculateWinner, whivh gets called in handleClick
-
-
-      
+    game.update();
+    //Assert
+    expect(game.find("div[id='winner-status']").text()).toBe('Draw');
+    expect(inst.state.winStatus.isDraw).toBe(true);   
   })
 
-  it("handleClick re-renders entire board and continuePlay state remains true when no win and no draw", () => {
+  it("when there is no win and space left on the board, continuePlay continues to be true and the next player is prompted to play", () => {
+    //Arrange
     const inst = game.instance();
     inst.setState({
       history: [
@@ -248,19 +248,12 @@ describe("Game", () => {
       stepNumber: 1,
     })
 
+    // Act
     inst.handleClick(8);
+    game.update();
 
-    const newState = inst.state.history;
-   // expect(inst.state.isWinner).toBe(true);
-
-   expect(game.find("div[id='winner-status']").text()).toBe("Next player: O");
-  //  expect(inst.state.isDraw).toBe(true);
-   // expect(inst.state.continuePlay).toBe(false);
-
-   //pull stuff out from the state, make a winStatus object on the state that will have 
-   //isWInner, isDraw, continue play to use in the test to only update state in calculateWinner, whivh gets called in handleClick
-
-
-      
+    //Assert
+    expect(game.find("div[id='winner-status']").text()).toBe("Next player: O");
+    expect(inst.state.winStatus.continuePlay).toBe(true);  
   })
 });

@@ -109,8 +109,6 @@ export default class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
       currentCoord: coord
     }, this.calculateWinner(squares));
-
-
   }
 
   jumpTo(step) {
