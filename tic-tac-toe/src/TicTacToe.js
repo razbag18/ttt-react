@@ -88,10 +88,6 @@ export default class Game extends React.Component {
         isDraw,
         continuePlay,
 
-       // ...winner
-        // isWinner: winner.isWinner,
-        // isDraw: winner.isDraw,
-        // continuePlay: winner.continuePlay
       })
       return;
     }
@@ -176,17 +172,17 @@ export default class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winStatus = this.state.winStatus;
-    const moves = history.map((step, move) => {
-      const coordinate = history[move].coordinates;
-      const isCurrentlySelected = move === this.state.stepNumber;
+    const moves = history.map((item, index) => {
+      const coordinate = history[index].coordinates;
+      const isCurrentlySelected = index === this.state.stepNumber;
       let desc = "";
-      desc = move
-        ? `Go to move # ${move} at coordinate ${coordinate}`
+      desc = index
+        ? `Go to move # ${index} at coordinate ${coordinate}`
         : "Go to game start";
 
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>
+        <li key={index}>
+          <button onClick={() => this.jumpTo(index)}>
             {isCurrentlySelected ? <b>{desc}</b> : desc}
           </button>
         </li>
@@ -223,67 +219,8 @@ export default class Game extends React.Component {
   }
 }
 
-// ========================================
-
-// ReactDOM.render(<Game />, document.getElementById("root"));
-
-// export function calculateWinner(squares) {
-//   const lines = [
-//     [0, 1, 2],
-//     [3, 4, 5],
-//     [6, 7, 8],
-//     [0, 3, 6],
-//     [1, 4, 7],
-//     [2, 5, 8],
-//     [0, 4, 8],
-//     [2, 4, 6]
-//   ];
-
-//   for (let i = 0; i < lines.length; i++) {
-//     const [a, b, c] = lines[i];
-//     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-//       //trying to set games' state outside of itself
-//       this.setState({
-//         isWinner: true,
-//         isDraw: false,
-//         continuePlay: false
-//       })
-//       return {
-//         winningSquares: lines[i],
-//         winner: squares[a]
-//       };
-//     }
-//   }
-//   if (!squares.includes(null)) {
-//     this.setState({
-//       isWinner: false,
-//       isDraw: true,
-//       continuePlay: false
-//     })
-//     return {
-//       isDraw: true,
-//       continuePlay: false,
-//     };
-//   }
-//   return {
-//       continuePlay: true,
-//       isDraw: false
-
-//   };
-// }
-
 export function calculateCoordinates(location) {
-  const coords = [
-    ["0,0"],
-    ["0,1"],
-    ["0,2"],
-    ["1,0"],
-    ["1,1"],
-    ["1,2"],
-    ["2,0"],
-    ["2,1"],
-    ["2,2"]
-  ];
-  return coords[location].join();
+  const coords = ["0,0", "0,1", "0,2", "1,0", "1,1", "1,2", "2,0", "2,1", "2,2"];
+  return coords[location];
 }
 
